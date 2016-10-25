@@ -1,0 +1,8 @@
+Pkgname: mppds
+Architecture: #arch
+OS: #os
+Version: #mppds_ver
+GPDBVersion: #gpver
+Description: 
+PostInstall:
+- Master: "echo 'Install completed successfully.'"

@@ -3,7 +3,7 @@ all: gppkg
 OS=$(word 1,$(subst _, ,$(BLD_ARCH)))
 ARCH=$(shell uname -p)
 
-WHEEL_DIR=build/wheels
+WHEEL_DIR=$(shell echo `pwd`/whlbuild/wheels)
 DOWNLOAD_CACHE_DIR=$(HOME)/.pip/downloads
 LINK_DIR=$(WHEEL_DIR)
 REQUIREMENTS_FILE=packageList
@@ -12,14 +12,12 @@ PATH := $(PWD)/env/bin:$(PATH)
 pythonVersion := 2.6
 pipArgs := --no-cache-dir 
 
-.PHONY: env clean
-
 env:
 	source /usr/local/{hawq,greenplum-db}/greenplum_path.sh
 	echo 'import sys; sys.setdefaultencoding("utf-8")' > $(PYTHONHOME)/lib/python2.6/site-packages/sitecustomize.py
 
-clean:
-	rm -rf ./build /tmp/pip_build_root
+clean: gppkgclean
+	rm -rf ./whlbuild /tmp/pip_build_root
 
 dependencies: pip
 	#sudo apt-get install `cat DEPENDENCIES* | grep -v '#'` -y
@@ -42,7 +40,7 @@ ifndef $( pip > /dev/null )
 endif
 
 wheel: dependencies
-	rm -rf ./build
+	rm -rf ./whlbuild
 	mkdir -p $(WHEEL_DIR)
 	pip wheel --find-links=$(LINK_DIR) --wheel-dir=$(WHEEL_DIR) -r $(REQUIREMENTS_FILE) $(pipArgs)
 
@@ -51,6 +49,8 @@ DEPENDENT_RPMS=
 MPPDS_VER=0.0.1
 MPPDS_REL=1
 
+# These get passed to the RPM build, the spec file uses these
+MPPDS_RPM_FLAGS="--define 'mppds_dir $(WHEEL_DIR)' --define 'mppds_ver $(MPPDS_VER)' --define 'mppds_rel $(MPPDS_REL)'"
 MPPDS_RPM=mppds-$(MPPDS_VER)-$(MPPDS_REL).$(ARCH).rpm
 MPPDS_GPPKG=mppds-$(MPPDS_VER)_r$(MPPDS_REL)-$(OS)-$(ARCH).gppkg
 
@@ -62,8 +62,9 @@ EXTRA_CLEAN+=$(MPPDS_RPM) $(MPPDS_GPPKG)
 #
 include gppkg.mk
 
-gppkg: wheel
+gppkg: 
+#gppkg: wheel
 	echo "Do the gppkg-ing thing"
-	$(MAKE) $(MPPDS_GPPKG) MAIN_RPM=$(MPPDS_RPM) DEPENDENT_RPMS=$(DEPENDENT_RPMS)
+	$(MAKE) $(MPPDS_GPPKG) MAIN_RPM=$(MPPDS_RPM) RPM_FLAGS=$(MPPDS_RPM_FLAGS) DEPENDENT_RPMS=$(DEPENDENT_RPMS) 
 
-.PHONY: gppkg
+.PHONY: gppkg env clean

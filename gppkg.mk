@@ -1,8 +1,10 @@
-MPPROOT := "/usr/local/hawq"
-pg_config_binary := $(MPPROOT)/bin/pg_config
-pg_config_path := $(shell `pg_config --includedir`/pg_config.h)
-GP_VERSION_NUM := $(shell grep 'define  *GP_VERSION_NUM' $(pg_config_path) \
+MPPROOT="/usr/local/hawq"
+pg_config_binary=$(MPPROOT)/bin/pg_config
+pg_config_include=$(MPPROOT)/include/pg_config.h
+GP_VERSION_NUM := $(shell grep 'define  *GP_VERSION_NUM' $(pg_config_include) \
         | perl -ne '$$m1=int($$1/10000),$$m2=int(($$1-$$m1*10000)/100) if/^.*?([0-9]+)/;print "$$m1.$$m2$$/"' )
+
+export BLD_ARCH:=$(shell ./set_build_arch.sh)
 
 OS=$(word 1,$(subst _, ,$(BLD_ARCH)))
 ARCH=$(shell uname -p)
@@ -50,7 +52,7 @@ PWD=$(shell pwd)
 	rm -rf RPMS BUILD SPECS
 
 gppkg_spec.yml: gppkg_spec.yml.in
-	cat $< | sed "s/#arch/$(ARCH)/g" | sed "s/#os/$(OS)/g" | sed 's/#gpver/$(GP_VERSION_NUM)/g' > $@
+	cat $< | sed "s/#arch/$(ARCH)/g" | sed "s/#os/$(OS)/g" | sed 's/#gpver/$(GP_VERSION_NUM)/g' | sed 's/#mppds_ver/$(MPPDS_VER)r$(MPPDS_REL)/g'  > $@
 
 %.gppkg: gppkg_spec.yml $(MAIN_RPM) $(DEPENDENT_RPMS)
 	mkdir -p gppkg/deps 
@@ -64,7 +66,7 @@ endif
 	source $(MPPROOT)/greenplum_path.sh && gppkg --build gppkg 
 	rm -rf gppkg
 
-clean:
+gppkgclean:
 	rm -rf RPMS BUILD SPECS
 	rm -rf gppkg
 	rm -f gppkg_spec.yml
