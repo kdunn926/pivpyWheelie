@@ -1,3 +1,8 @@
+all: gppkg
+
+OS=$(word 1,$(subst _, ,$(BLD_ARCH)))
+ARCH=$(shell uname -p)
+
 WHEEL_DIR=build/wheels
 DOWNLOAD_CACHE_DIR=$(HOME)/.pip/downloads
 LINK_DIR=$(WHEEL_DIR)
@@ -15,10 +20,6 @@ env:
 
 clean:
 	rm -rf ./build /tmp/pip_build_root
-
-gppkg: wheel
-	#mkdir -p $(WHEEL_DIR)
-	echo "Do the gppkg-ing thing"
 
 dependencies: pip
 	#sudo apt-get install `cat DEPENDENCIES* | grep -v '#'` -y
@@ -45,3 +46,24 @@ wheel: dependencies
 	mkdir -p $(WHEEL_DIR)
 	pip wheel --find-links=$(LINK_DIR) --wheel-dir=$(WHEEL_DIR) -r $(REQUIREMENTS_FILE) $(pipArgs)
 
+DEPENDENT_RPMS=
+
+MPPDS_VER=0.0.1
+MPPDS_REL=1
+
+MPPDS_RPM=mppds-$(MPPDS_VER)-$(MPPDS_REL).$(ARCH).rpm
+MPPDS_GPPKG=mppds-$(MPPDS_VER)_r$(MPPDS_REL)-$(OS)-$(ARCH).gppkg
+
+TARGET_GPPKG=$(MPPDS_GPPKG)
+EXTRA_CLEAN+=$(MPPDS_RPM) $(MPPDS_GPPKG)
+
+#
+# Generic rules to build gppkgs included here
+#
+include gppkg.mk
+
+gppkg: wheel
+	echo "Do the gppkg-ing thing"
+	$(MAKE) $(MPPDS_GPPKG) MAIN_RPM=$(MPPDS_RPM) DEPENDENT_RPMS=$(DEPENDENT_RPMS)
+
+.PHONY: gppkg
