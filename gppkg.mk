@@ -1,4 +1,4 @@
-MPPROOT="/usr/local/hawq"
+#export MPPROOT="/usr/local/hawq"
 
 WHEEL_DIR=$(shell echo `pwd`/whlbuild/wheels)
 pg_config_binary=$(MPPROOT)/bin/pg_config
