@@ -14,18 +14,18 @@ Requires:       blas
 The MPPDS module provides Python extensions for Apache HAWQ and Greenplum Database.
 
 %define PYTHONPATH /usr/local/hawq/lib/python
+%define PYTHONHOME /usr/local/hawq/ext/python
 
 %install
-mkdir -p %{buildroot}/temp/lib 
-cp -rf %{mppds_dir}/../../bundled/get-pip.py %{buildroot}/temp/
-cp -rf %{mppds_dir}/../../bundled/*.whl %{buildroot}/temp/lib
-cp -rf %{mppds_dir}/*.whl %{buildroot}/temp/lib
+mkdir -p %{PYTHONPATH}/wheels
+cp -rf %{mppds_dir}/../../bundled/*.whl %{PYTHONPATH}/wheels
+cp -rf %{mppds_dir}/*.whl %{PYTHONPATH}/wheels
 
 %post
+env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/python %{PYTHONPATH}/wheels/pip-8.1.2-py2.py3-none-any.whl/pip install --no-cache-dir --no-index %{PYTHONPATH}/wheels/pip-8.1.2-py2.py3-none-any.whl
+
 #source /usr/local/{hawq,greenplum-db}/greenplum_path.sh
 #env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/python %{buildroot}/temp/get-pip.py --no-index --find-links=%{buildroot}/temp
-env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/python %{mppds_dir}/../../bundled/get-pip.py 
-env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/pip install --no-index --find-links=%{buildroot}/temp/lib numpy==1.9.3 --upgrade
+env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/pip install --no-index --find-links=%{PYTHONPATH}/wheels numpy==1.9.3 --no-cache-dir --upgrade
 
 %files
-/temp
