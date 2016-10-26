@@ -1,8 +1,16 @@
 MPPROOT="/usr/local/hawq"
 pg_config_binary=$(MPPROOT)/bin/pg_config
 pg_config_include=$(MPPROOT)/include/pg_config.h
+
+# Assume HAWQ
+GP_VERSION_NUM := $(shell grep 'define  *HQ_MAJORVERSION' $(pg_config_include) \
+        | perl -pe 's/[^"]+\"(\d.\d)\"/\1/' )
+
+# Failback to Greenplum
+ifeq ($(GP_VERSION_NUM), "")
 GP_VERSION_NUM := $(shell grep 'define  *GP_VERSION_NUM' $(pg_config_include) \
         | perl -ne '$$m1=int($$1/10000),$$m2=int(($$1-$$m1*10000)/100) if/^.*?([0-9]+)/;print "$$m1.$$m2$$/"' )
+endif
 
 export BLD_ARCH:=$(shell ./set_build_arch.sh)
 
@@ -67,12 +75,9 @@ endif
 	rm -rf gppkg
 
 gppkgclean:
-	rm -rf RPMS BUILD SPECS
+	rm -rf RPMS BUILD SPECS SRPMS BUILDROOT SOURCES tmp
 	rm -rf gppkg
 	rm -f gppkg_spec.yml
-ifdef EXTRA_CLEAN
-	rm -f $(EXTRA_CLEAN)
-endif
 
 install: $(TARGET_GPPKG)
 	source $(MPPROOT)/greenplum_path.sh && gppkg -i $(TARGET_GPPKG)

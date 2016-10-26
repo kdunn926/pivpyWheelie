@@ -62,8 +62,8 @@ EXTRA_CLEAN+=$(MPPDS_RPM) $(MPPDS_GPPKG)
 #
 include gppkg.mk
 
-gppkg: 
 #gppkg: wheel
+gppkg: 
 	echo "Do the gppkg-ing thing"
 	$(MAKE) $(MPPDS_GPPKG) MAIN_RPM=$(MPPDS_RPM) RPM_FLAGS=$(MPPDS_RPM_FLAGS) DEPENDENT_RPMS=$(DEPENDENT_RPMS) 
 

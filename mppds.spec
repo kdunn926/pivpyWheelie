@@ -7,7 +7,7 @@ Group:          Development/Tools
 Prefix:         /temp
 AutoReq:        no
 AutoProv:       no
-Provides:       mppds = %{mppds_ver}, python-numpy-1.9.3
+Provides:       mppds = %{mppds_ver}, numpy = 1.9.3
 Requires:       blas
 
 %description
