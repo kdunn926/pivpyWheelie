@@ -6,7 +6,7 @@ A packaging mechanism for painlessly deploying additional pl/Python packages in 
 ### Checkout the codes on an existing HDB or GPDB sandbox
 
 
-    $ git clone
+    $ git clone https://github.com/kdunn926/pivpyWheelie
 
 ### Modify packageList to your liking
 
