@@ -3,15 +3,17 @@ License:        Apache 2.0
 Name:           mppds
 Version:        %{mppds_ver}
 Release:        %{mppds_rel}
+Source:         %{name}.tar.gz
 Group:          Development/Tools
-Prefix:         /temp
+Prefix:         /tmp
 AutoReq:        no
 AutoProv:       no
 Provides:       mppds = %{mppds_ver}, numpy = 1.9.3
 Requires:       blas
+BuildRoot:      %{_tmppath}/%{name}-build
 
 # Ignore "installed but unpackaged" file warning
-%define _unpackaged_files_terminate_build 0
+#%define _unpackaged_files_terminate_build 0
 
 %description
 The MPPDS module provides Python extensions for Apache HAWQ and Greenplum Database.
@@ -19,10 +21,13 @@ The MPPDS module provides Python extensions for Apache HAWQ and Greenplum Databa
 %define PYTHONPATH /usr/local/hawq/lib/python
 %define PYTHONHOME /usr/local/hawq/ext/python
 
+%prep
+%setup -n %{name}
+
 %build
-mkdir -p %{PYTHONPATH}/wheels
-cp -f %{buildroot}/packageList %{PYTHONPATH}/wheels/
-cp -f %{buildroot}/*.whl %{PYTHONPATH}/wheels/
+mkdir -p $RPM_BUILD_ROOT/%{PYTHONPATH}/wheels
+cp -f packageList $RPM_BUILD_ROOT/%{PYTHONPATH}/wheels/
+cp -f *.whl $RPM_BUILD_ROOT/%{PYTHONPATH}/wheels/
 
 %post
 env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/python %{PYTHONPATH}/wheels/pip-8.1.2-py2.py3-none-any.whl/pip install --no-cache-dir --no-index %{PYTHONPATH}/wheels/pip-8.1.2-py2.py3-none-any.whl
@@ -32,5 +37,7 @@ env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/pip install --no-ind
 env PYTHONPATH=%{PYTHONPATH} /usr/local/hawq/ext/python/bin/pip install --no-index --find-links=%{PYTHONPATH}/wheels -r %{PYTHONPATH}/wheels/packageList --no-cache-dir --upgrade
 
 %files
-/../whlbuild/wheels
-/../bundled
+%{PYTHONPATH}/wheels
+#/mppds
+#/../whlbuild/wheels
+#/../bundled

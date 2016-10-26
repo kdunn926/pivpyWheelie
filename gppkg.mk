@@ -55,9 +55,7 @@ RPM_NAME=$(word 1,$(RPM_ARGS))
 PWD=$(shell pwd)
 %.rpm: 
 	rm -rf RPMS BUILD SPECS
-	mkdir RPMS BUILD SPECS
-	cp packageList BUILD/
-	cp $(WHEEL_DIR)/*.whl BUILD/
+	mkdir -p RPMS BUILD SPECS
 	cp $(RPM_NAME).spec SPECS/
 	rpmbuild -bb SPECS/$(RPM_NAME).spec --buildroot $(PWD)/BUILD --define '_topdir $(PWD)' --define '__os_install_post \%{nil}' --define 'buildarch $(ARCH)' $(RPM_FLAGS)
 	mv RPMS/$(ARCH)/$*.rpm .
@@ -79,7 +77,7 @@ endif
 	rm -rf gppkg
 
 gppkgclean:
-	rm -rf RPMS BUILD SPECS SRPMS BUILDROOT SOURCES tmp
+	rm -rf RPMS BUILD SPECS SRPMS BUILDROOT tmp
 	rm -rf gppkg
 	rm -f gppkg_spec.yml
 
