@@ -12,12 +12,17 @@ PATH := $(PWD)/env/bin:$(PATH)
 pythonVersion := 2.6
 pipArgs := --no-cache-dir 
 
+clean: gppkgclean
+	rm -rf ./whlbuild /tmp/pip_build_root
+
 env:
 	source /usr/local/{hawq,greenplum-db}/greenplum_path.sh
 	echo 'import sys; sys.setdefaultencoding("utf-8")' > $(PYTHONHOME)/lib/python2.6/site-packages/sitecustomize.py
 
-clean: gppkgclean
-	rm -rf ./whlbuild /tmp/pip_build_root
+pip: env
+ifndef $( pip > /dev/null )
+	python ./bundled/pip-8.1.2-py2.py3-none-any.whl/pip install --no-cache-dir --no-index ./bundled/pip-8.1.2-py2.py3-none-any.whl
+endif
 
 dependencies: pip
 	#sudo apt-get install `cat DEPENDENCIES* | grep -v '#'` -y
@@ -34,10 +39,6 @@ dependencies: pip
 	echo "Installing NumPy 1.9.3"
 	pip install --no-index --find-links=./bundled/ numpy==1.9.3 --upgrade
 
-pip: env
-ifndef $( pip > /dev/null )
-	python ./bundled/get-pip.py --no-index --find-links=./bundled/
-endif
 
 wheel: dependencies
 	rm -rf ./whlbuild

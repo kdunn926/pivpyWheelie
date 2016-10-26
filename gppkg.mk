@@ -1,4 +1,6 @@
 MPPROOT="/usr/local/hawq"
+
+WHEEL_DIR=$(shell echo `pwd`/whlbuild/wheels)
 pg_config_binary=$(MPPROOT)/bin/pg_config
 pg_config_include=$(MPPROOT)/include/pg_config.h
 
@@ -54,6 +56,8 @@ PWD=$(shell pwd)
 %.rpm: 
 	rm -rf RPMS BUILD SPECS
 	mkdir RPMS BUILD SPECS
+	cp packageList BUILD/
+	cp $(WHEEL_DIR)/*.whl BUILD/
 	cp $(RPM_NAME).spec SPECS/
 	rpmbuild -bb SPECS/$(RPM_NAME).spec --buildroot $(PWD)/BUILD --define '_topdir $(PWD)' --define '__os_install_post \%{nil}' --define 'buildarch $(ARCH)' $(RPM_FLAGS)
 	mv RPMS/$(ARCH)/$*.rpm .

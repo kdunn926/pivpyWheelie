@@ -1,7 +1,6 @@
 numpy==1.9.3
 xgboost==0.4a30
 scikit_learn==0.17.1
-#statsmodels==0.6.1
 Pattern==2.6
 nltk==3.1
 beautifulsoup4==4.5.1
