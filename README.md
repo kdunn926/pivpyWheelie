@@ -1,13 +1,13 @@
 # pivpyWheelie
 A packaging mechanism for painlessly deploying additional pl/Python packages in Pivotal HDB (Apache HAWQ) and Pivotal Greenplum.
 
-# Prerequisites:
+## Prerequisites:
 
 ### In general, you need compilers (and a symlink), BLAS, and rpmbuild:
     $ sudo yum install gcc gcc-c++ openblas-devel rpm-build
     $ (cd /usr/bin && sudo ln -s c++ gxx)
 
-#### lxml-specific::
+#### lxml-specific:
     $ sudo yum install xslt-config libxml2-devel libxslt-devel libxslt 
 
 #### Scipy-specific:
@@ -15,12 +15,13 @@ A packaging mechanism for painlessly deploying additional pl/Python packages in 
 
 #### scikit-learn-specific:
 sklearn depends on Scipy, so you can first run `make` without scikit-learn in `packageList`, then install the generated WHL like this:
+
     $ pip install --no-index --find-links=./whlbuild/wheels scipy
 
 #### Matplotlib-specific:
     $ sudo yum install freetype-devel libpng-devel
 
-# Usage:
+## Usage:
 
 ### Checkout the codes on an existing HDB or GPDB sandbox
 
