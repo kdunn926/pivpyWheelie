@@ -9,9 +9,9 @@ GP_VERSION_NUM := $(shell grep 'define  *HQ_MAJORVERSION' $(pg_config_include) \
         | perl -pe 's/[^"]+\"(\d.\d)\"/\1/' )
 
 # Failback to Greenplum
-ifeq ($(GP_VERSION_NUM), "")
-GP_VERSION_NUM := $(shell grep 'define  *GP_VERSION_NUM' $(pg_config_include) \
-        | perl -ne '$$m1=int($$1/10000),$$m2=int(($$1-$$m1*10000)/100) if/^.*?([0-9]+)/;print "$$m1.$$m2$$/"' )
+ifeq (greenplum, $(findstring greenplum,$(MPPROOT)))
+GP_VERSION_NUM := $(shell grep 'define  *GP_MAJORVERSION' $(pg_config_include) \
+        | perl -pe 's/[^"]+\"(\d.\d)\"/\1/' )
 endif
 
 export BLD_ARCH:=$(shell ./set_build_arch.sh)

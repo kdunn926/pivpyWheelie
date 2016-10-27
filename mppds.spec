@@ -9,7 +9,6 @@ Prefix:         /tmp
 AutoReq:        no
 AutoProv:       no
 Provides:       mppds = %{mppds_ver}, numpy = 1.9.3
-Requires:       blas
 BuildRoot:      %{_tmppath}/%{name}-build
 
 # Compliments of https://www.suse.com/communities/blog/building-simple-rpms-arbitary-files/

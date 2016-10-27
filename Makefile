@@ -17,8 +17,8 @@ env:
 	echo 'import sys; sys.setdefaultencoding("utf-8")' > $(PYTHONHOME)/lib/python2.6/site-packages/sitecustomize.py
 
 pip: env
-ifndef $( pip > /dev/null )
-	python ./bundled/pip-8.1.2-py2.py3-none-any.whl/pip install --no-cache-dir --no-index ./bundled/pip-8.1.2-py2.py3-none-any.whl
+ifneq ("$(wildchar $(MPPROOT)/ext/python/bin/pip)","")
+	$(MPPROOT)/ext/python/bin/python ./bundled/pip-8.1.2-py2.py3-none-any.whl/pip install --no-cache-dir --no-index ./bundled/pip-8.1.2-py2.py3-none-any.whl --upgrade
 endif
 
 dependencies: pip
@@ -34,13 +34,17 @@ dependencies: pip
 	# libffi-devel - ?
 	#
 	echo "Installing NumPy 1.9.3"
-	pip install --no-index --find-links=./bundled/ numpy==1.9.3 --upgrade
+	$(MPPROOT)/ext/python/bin/pip install --no-index --find-links=./bundled/ numpy==1.9.3 --upgrade
+	echo "Installing distribute"
+	$(MPPROOT)/ext/python/bin/pip install --no-index --find-links=./bundled/ distribute
+	echo "Installing Wheel"
+	$(MPPROOT)/ext/python/bin/pip install --no-index --find-links=./bundled/ wheel
 
 
-wheels: pip
+wheels: dependencies
 	#rm -rf ./whlbuild
 	mkdir -p $(WHEEL_DIR)
-	pip wheel --find-links=$(LINK_DIR) --wheel-dir=$(WHEEL_DIR) -r $(REQUIREMENTS_FILE) $(pipArgs)
+	$(MPPROOT)/ext/python/bin/pip wheel --find-links=$(LINK_DIR) --wheel-dir=$(WHEEL_DIR) -r $(REQUIREMENTS_FILE) $(pipArgs)
 	rm -rf SOURCES/mppds
 	mkdir -p SOURCES/mppds
 	cp $(WHEEL_DIR)/*.whl SOURCES/mppds/
