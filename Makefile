@@ -3,7 +3,6 @@ all: gppkg
 OS=$(word 1,$(subst _, ,$(BLD_ARCH)))
 ARCH=$(shell uname -p)
 
-export MPPROOT=/usr/local/hawq
 WHEEL_DIR=$(shell echo `pwd`/whlbuild/wheels)
 DOWNLOAD_CACHE_DIR=$(HOME)/.pip/downloads
 LINK_DIR=$(WHEEL_DIR)
