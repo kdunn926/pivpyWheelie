@@ -1,5 +1,5 @@
 # pivpyWheelie
-A packaging mechanism for painlessly deploying additional pl/Python packages in Pivotal HDB (Apache HAWQ) and Pivotal Greenplum.
+A packaging mechanism for painlessly deploying additional pl/Python packages in Pivotal HDB (Apache HAWQ) and Pivotal Greenplum. Note, the following instructions are *not* intended to be executed on a production MPP system, but rather in a sandbox environment or build server with the same OS and HAWQ/GP version installed in `/usr/local/<hawq or greenplum-db>`. The resulting `ggpkg` artifact is what *would* be installed on the desired MPP system.
 
 ## Prerequisites:
 
